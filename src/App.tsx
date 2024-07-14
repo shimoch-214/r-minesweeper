@@ -11,6 +11,7 @@ function App() {
     // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
     setGreetMsg(await invoke("greet", { name }));
   }
+
   return (
     <div className="container">
       <h1>Welcome to Tauri!</h1>
