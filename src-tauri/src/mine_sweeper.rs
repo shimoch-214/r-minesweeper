@@ -1,3 +1,3 @@
 mod main;
 
-pub use main::MineSweeper;
+pub use main::GameManager;
