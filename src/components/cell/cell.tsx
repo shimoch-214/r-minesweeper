@@ -1,18 +1,23 @@
-import { type AroundMinesCount, Position } from "../../types";
+import { type MineSweeperModel, Position } from "../../types";
 import { Closed, Flagged } from "./closed";
 import { Opened } from "./opened";
 import { useMineSweeperCtx } from "../../provider";
+import { inProgress, isFlagged, isOpened } from "../lib";
 
 type Props = {
   x: number;
   y: number;
 };
 
-const selectCell = (opened: AroundMinesCount | undefined, flagged: boolean) => {
-  if (opened !== undefined) {
-    return <Opened value={opened} />;
+const selectCell = (mineSweeper: MineSweeperModel, pos: Position) => {
+  if (isOpened(mineSweeper, pos)) {
+    const aroundMineCount = mineSweeper.openedPositions.get(pos);
+    if (aroundMineCount === undefined)
+      throw new Error("unexpectedly not found");
+
+    return <Opened value={aroundMineCount} />;
   }
-  if (flagged) {
+  if (isFlagged(mineSweeper, pos)) {
     return <Flagged />;
   }
   return <Closed />;
@@ -23,19 +28,19 @@ export function Cell({ x, y }: Props) {
 
   const pos = Position(x, y);
 
-  const opened = mineSweeper.openedPositions.get(pos);
-  const flagged = mineSweeper.flaggedPositions.has(Position(x, y));
-
   const handleOpen = async () => {
-    if (opened !== undefined || flagged) return;
-    await open(x, y);
+    if (!inProgress(mineSweeper)) return;
+    if (!isOpened(mineSweeper, pos) && !isFlagged(mineSweeper, pos)) {
+      await open(x, y);
+    }
   };
 
   const handleFlag = async (event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault();
-    if (opened !== undefined) return;
+    if (!inProgress(mineSweeper)) return;
+    if (isOpened(mineSweeper, pos)) return;
 
-    if (flagged) {
+    if (isFlagged(mineSweeper, pos)) {
       await subFlag(x, y);
     } else {
       await addFlag(x, y);
@@ -45,7 +50,7 @@ export function Cell({ x, y }: Props) {
   return (
     <button onClick={handleOpen} onContextMenu={handleFlag} type="button">
       <div className="size-8 text-center leading-loose">
-        {selectCell(opened, flagged)}
+        {selectCell(mineSweeper, pos)}
       </div>
     </button>
   );

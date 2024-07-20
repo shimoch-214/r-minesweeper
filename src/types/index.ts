@@ -1,4 +1,4 @@
-export type Status = "Inti" | "Started" | "Failed" | "Success";
+export type Status = "Init" | "Started" | "Failed" | "Success";
 
 type BrandType<K, T> = K & { __brand: T };
 
