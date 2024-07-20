@@ -18,7 +18,7 @@ function App() {
 
   return gameState ? (
     <>
-      <p>{JSON.stringify(gameState)}</p>
+      <p className="text-blue-300">{JSON.stringify(gameState)}</p>
     </>
   ) : (
     <>

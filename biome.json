@@ -11,9 +11,6 @@
   },
   "formatter": {
     "indentStyle": "space",
-    "ignore": [
-      "**/node_modules/**",
-      "./src-tauri/target/**"
-    ]
+    "ignore": ["**/node_modules/**", "./src-tauri/target/**"]
   }
 }
