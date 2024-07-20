@@ -1,9 +1,15 @@
 use std::{
     collections::{HashSet, VecDeque},
     fmt::Display,
+    sync::{Mutex, MutexGuard},
 };
 
-use r_minesweeper::random_range;
+use rand::{thread_rng, Rng};
+
+fn random_range(min: usize, max: usize) -> usize {
+    let mut rng = thread_rng();
+    rng.gen_range(min..max)
+}
 
 type Position = (usize, usize);
 
@@ -21,7 +27,7 @@ fn get_around_positions(
 // 爆弾の場合にNone, それ以外は Some(周囲の爆弾の数: u8)
 type PositionStatus = Option<u8>;
 
-struct MineSweeper {
+pub struct MineSweeper {
     width: usize,
     hight: usize,
     mine_count: usize,
@@ -41,6 +47,32 @@ impl MineSweeper {
             flagged_positions: HashSet::new(),
             position_status_array: vec![vec![Option::Some(0); width]; hight],
         }
+    }
+
+    pub fn get_width(&self) -> usize {
+        self.width
+    }
+
+    pub fn get_hight(&self) -> usize {
+        self.hight
+    }
+
+    pub fn get_mine_count(&self) -> usize {
+        self.mine_count
+    }
+
+    pub fn get_opened_positions_with_value(&self) -> Vec<(Position, u8)> {
+        self.opened_positions
+            .iter()
+            .map(|p| {
+                let v = self.position_status_array[p.1][p.0].unwrap();
+                (*p, v)
+            })
+            .collect()
+    }
+
+    pub fn get_flagged_positions(&self) -> HashSet<Position> {
+        self.flagged_positions.clone()
     }
 
     pub fn init_positions_status(&mut self, init_pos: &Position) {
@@ -151,12 +183,24 @@ impl Display for MineSweeper {
 
 // Game 本体の管理
 
-#[derive(PartialEq)]
-enum GameStatus {
+#[derive(PartialEq, Clone, Copy)]
+pub enum GameStatus {
     Init,
     Started,
     Failed,
     Success,
+}
+
+impl GameStatus {
+    fn start(&mut self) {
+        *self = GameStatus::Started
+    }
+    fn fail(&mut self) {
+        *self = GameStatus::Failed
+    }
+    fn success(&mut self) {
+        *self = GameStatus::Success
+    }
 }
 
 impl Display for GameStatus {
@@ -171,65 +215,62 @@ impl Display for GameStatus {
 }
 
 pub struct GameManager {
-    mine_sweeper: MineSweeper,
-    status: GameStatus,
+    status: Mutex<GameStatus>,
+    mine_sweeper: Mutex<MineSweeper>,
 }
 
 impl GameManager {
     pub fn new(width: usize, hight: usize, mine_count: usize) -> GameManager {
         GameManager {
-            mine_sweeper: MineSweeper::new(width, hight, mine_count),
-            status: GameStatus::Init,
+            status: Mutex::new(GameStatus::Init),
+            mine_sweeper: Mutex::new(MineSweeper::new(width, hight, mine_count)),
         }
     }
 
+    pub fn get_status(&self) -> GameStatus {
+        *self.status.lock().unwrap()
+    }
+
+    pub fn get_minesweeper(&self) -> MutexGuard<MineSweeper> {
+        self.mine_sweeper.lock().unwrap()
+    }
+
     fn is_in_progress(&self) -> bool {
-        match self.status {
+        match self.get_status() {
             GameStatus::Init | GameStatus::Started => true,
             GameStatus::Failed | GameStatus::Success => false,
         }
     }
 
-    pub fn add_flag(&mut self, pos: &Position) {
+    pub fn add_flag(&self, pos: &Position) {
         if !self.is_in_progress() {
-            panic!("異常な status: {}", self.status)
+            panic!("異常な status: {}", self.get_status())
         }
-        self.mine_sweeper.add_flag(pos);
+        self.mine_sweeper.lock().unwrap().add_flag(pos);
     }
 
-    pub fn open(&mut self, pos: &Position) {
+    pub fn open(&self, pos: &Position) {
+        let current_status = self.get_status();
         if !self.is_in_progress() {
-            panic!("異常な status: {}", self.status)
+            panic!("異常な status: {}", current_status)
         }
 
-        if self.status == GameStatus::Init {
-            self.mine_sweeper.init_positions_status(pos);
-            self.status = GameStatus::Started;
+        let mut ms = self.mine_sweeper.lock().unwrap();
+
+        if current_status == GameStatus::Init {
+            ms.init_positions_status(pos);
+            // status = GameStatus::Started;
+            self.status.lock().unwrap().start()
         }
-        match self.mine_sweeper.open(pos) {
+        match ms.open(pos) {
             Ok(_) => {
-                if self.mine_sweeper.is_completed() {
-                    self.status = GameStatus::Success;
+                if ms.is_completed() {
+                    self.status.lock().unwrap().success();
                 }
             }
             Err(_) => {
-                self.status = GameStatus::Failed;
+                self.status.lock().unwrap().fail();
             }
         }
     }
 }
-
-// #[cfg(test)]
-// mod tests {
-//     use crate::mine_sweeper::MineSweeper;
-
-//     #[test]
-//     fn test() {
-//         let mut ms = MineSweeper::new(9, 9, 10);
-//         ms.init_positions_status(&(0, 0));
-//         ms.add_flag(&(1, 1));
-//         ms.open(&(0, 0));
-
-//         println!("{}", ms);
-//     }
-// }
