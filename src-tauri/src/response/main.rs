@@ -6,7 +6,7 @@ use crate::mine_sweeper::GameManager;
 struct OpenedPosition {
     x: usize,
     y: usize,
-    around_bombs_count: u8,
+    around_mines_count: u8,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -39,11 +39,11 @@ impl From<&GameManager> for Response {
             .get_opened_positions_with_value()
             .iter()
             .map(|p_w| {
-                let ((x, y), around_bombs_count) = *p_w;
+                let ((x, y), around_mines_count) = *p_w;
                 OpenedPosition {
                     x,
                     y,
-                    around_bombs_count,
+                    around_mines_count,
                 }
             })
             .collect();

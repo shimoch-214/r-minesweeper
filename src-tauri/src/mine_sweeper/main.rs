@@ -108,6 +108,10 @@ impl MineSweeper {
         }
     }
 
+    pub fn sub_flag(&mut self, pos: &Position) {
+        self.flagged_positions.remove(pos);
+    }
+
     fn search_positions(&self, pos: &Position) -> HashSet<Position> {
         let mut searched: HashSet<Position> = HashSet::new();
         let mut q: VecDeque<Position> = VecDeque::new();
@@ -247,6 +251,13 @@ impl GameManager {
             panic!("異常な status: {}", self.get_status())
         }
         self.mine_sweeper.lock().unwrap().add_flag(pos);
+    }
+
+    pub fn sub_flag(&self, pos: &Position) {
+        if !self.is_in_progress() {
+            panic!("異常な status: {}", self.get_status())
+        }
+        self.mine_sweeper.lock().unwrap().sub_flag(pos);
     }
 
     pub fn open(&self, pos: &Position) {

@@ -25,10 +25,16 @@ fn add_flag(gm: State<'_, GameManager>, x: usize, y: usize) -> Response {
     Response::from(&*gm)
 }
 
+#[tauri::command]
+fn sub_flag(gm: State<'_, GameManager>, x: usize, y: usize) -> Response {
+    gm.sub_flag(&(x, y));
+    Response::from(&*gm)
+}
+
 fn main() {
     tauri::Builder::default()
         .manage(GameManager::new(10, 10, 9))
-        .invoke_handler(tauri::generate_handler![get, open, add_flag])
+        .invoke_handler(tauri::generate_handler![get, open, add_flag, sub_flag])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

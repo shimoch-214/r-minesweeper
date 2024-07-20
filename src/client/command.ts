@@ -1,14 +1,21 @@
 import { invoke } from "@tauri-apps/api/tauri";
-import type { MineSweeperModel, ResponseModel } from "./type";
+import type { ResponseModel } from "./type";
+import { Position, type MineSweeperModel } from "../types";
 
 const convert = (res: ResponseModel): MineSweeperModel => {
+  const openedPositions: MineSweeperModel["openedPositions"] = new Map(
+    res.opened_positions.map((p) => [Position(p.x, p.y), p.around_mines_count]),
+  );
+  const flaggedPositions: MineSweeperModel["flaggedPositions"] = new Set(
+    res.flagged_positions.map((p) => Position(p.x, p.y)),
+  );
   return {
     status: res.status,
     width: res.width,
     hight: res.hight,
     mineCount: res.mine_count,
-    openedPositions: res.opened_positions,
-    flaggedPositions: res.flagged_positions,
+    openedPositions,
+    flaggedPositions,
   };
 };
 
@@ -27,5 +34,13 @@ export const addFlag = async (
   y: number,
 ): Promise<MineSweeperModel> => {
   const res: ResponseModel = await invoke("add_flag", { x, y });
+  return convert(res);
+};
+
+export const subFlag = async (
+  x: number,
+  y: number,
+): Promise<MineSweeperModel> => {
+  const res: ResponseModel = await invoke("sub_flag", { x, y });
   return convert(res);
 };
