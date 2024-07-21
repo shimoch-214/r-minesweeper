@@ -10,7 +10,7 @@
     "tauri": "tauri",
     "format": "biome format --write",
     "lint": "biome lint .",
-    "tsc": "tsc"
+    "tsc": "tsc --noEmit"
   },
   "dependencies": {
     "@tauri-apps/api": "1",
