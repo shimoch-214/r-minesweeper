@@ -1,5 +1,5 @@
 export function Closed(): JSX.Element {
-  return <div className="bg-slate-500 text-pink-400">c</div>;
+  return <div className="bg-slate-500">&nbsp;</div>;
 }
 
 export function Flagged(): JSX.Element {
