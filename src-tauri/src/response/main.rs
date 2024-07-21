@@ -69,24 +69,3 @@ impl From<&GameManager> for Response {
         }
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use serde_json::json;
-
-    use crate::mine_sweeper::GameManager;
-
-    use super::Response;
-
-    #[test]
-    fn test() {
-        let gm = GameManager::new(9, 9, 10);
-        gm.open(&(1, 1));
-        gm.restart();
-
-        let res = Response::from(&gm);
-
-        let j = json!(res);
-        println!("{}", j);
-    }
-}

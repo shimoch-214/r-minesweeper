@@ -1,6 +1,6 @@
 import { invoke } from "@tauri-apps/api/tauri";
 import type { ResponseModel } from "./type";
-import { type GameMode, Position, type MineSweeperModel } from "../types";
+import { type GameMode, Position, type MineSweeperModel } from "../../types";
 
 const convert = (res: ResponseModel): MineSweeperModel => {
   const openedPositions: MineSweeperModel["openedPositions"] = new Map(

@@ -1,4 +1,4 @@
-import { useMineSweeperCtx } from "../../provider";
+import { useMineSweeperCtx } from "../provider";
 import { GameMode } from "../../types";
 
 export function MineSweeperModeSelect(): JSX.Element {

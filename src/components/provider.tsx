@@ -5,8 +5,8 @@ import {
   useEffect,
   useState,
 } from "react";
-import type { GameMode, MineSweeperModel } from "./types";
-import * as command from "./client/command";
+import type { GameMode, MineSweeperModel } from "../types";
+import * as command from "../lib/client/command";
 
 type Props = { children: React.ReactNode };
 

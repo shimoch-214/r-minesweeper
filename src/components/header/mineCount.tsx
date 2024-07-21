@@ -1,4 +1,4 @@
-import { useMineSweeperCtx } from "../../provider";
+import { useMineSweeperCtx } from "../provider";
 
 export function MineSweeperMineCount(): JSX.Element {
   const { mineSweeper: ms } = useMineSweeperCtx();

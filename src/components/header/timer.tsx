@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useMineSweeperCtx } from "../../provider";
+import { useMineSweeperCtx } from "../provider";
 
 export function MineSweeperTimer(): JSX.Element {
   const [time, setTime] = useState(0);

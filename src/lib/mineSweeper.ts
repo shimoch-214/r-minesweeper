@@ -1,4 +1,4 @@
-import type { MineSweeperModel, Position } from "../../types";
+import type { MineSweeperModel, Position } from "../types";
 
 export const inProgress = (mineSweeper: MineSweeperModel): boolean => {
   switch (mineSweeper.status) {

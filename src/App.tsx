@@ -1,5 +1,5 @@
 import { MineSweeper } from "./components/mineSweeper";
-import { MineSweeperProvider } from "./provider";
+import { MineSweeperProvider } from "./components/provider";
 
 function App() {
   return (

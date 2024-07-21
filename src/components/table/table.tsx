@@ -1,4 +1,4 @@
-import { useMineSweeperCtx } from "../../provider";
+import { useMineSweeperCtx } from "../provider";
 import { Cell } from "./cell/cell";
 
 export function MineSweeperTable(): JSX.Element {

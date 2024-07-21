@@ -1,8 +1,13 @@
 import { type MineSweeperModel, Position } from "../../../types";
 import { Closed, Flagged, HiddenMine, InvalidFlagged } from "./closed";
 import { Opened } from "./opened";
-import { useMineSweeperCtx } from "../../../provider";
-import { inProgress, isFlagged, isMine, isOpened } from "../../lib";
+import { useMineSweeperCtx } from "../../provider";
+import {
+  inProgress,
+  isFlagged,
+  isMine,
+  isOpened,
+} from "../../../lib/mineSweeper";
 
 type Props = {
   x: number;

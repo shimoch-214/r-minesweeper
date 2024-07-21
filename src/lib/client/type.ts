@@ -1,4 +1,4 @@
-import type { AroundMinesCount, Status } from "../types";
+import type { AroundMinesCount, Status } from "../../types";
 
 export type ResponseModel = {
   status: Status;
