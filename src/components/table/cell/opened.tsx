@@ -1,4 +1,4 @@
-import type { AroundMinesCount } from "../../types";
+import type { AroundMinesCount } from "../../../types";
 
 type Props = {
   value: AroundMinesCount;

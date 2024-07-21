@@ -19,3 +19,13 @@ export type MineSweeperModel = {
   flaggedPositions: Set<Position>;
   minePositions: Set<Position>;
 };
+
+export const GameMode = {
+  Low: "Low",
+  Middle: "Middle",
+  High: "High",
+} as const;
+
+type ValueOf<T> = T[keyof T];
+
+export type GameMode = ValueOf<typeof GameMode>;

@@ -5,6 +5,7 @@ use std::{
 };
 
 use rand::{thread_rng, Rng};
+use serde::{Deserialize, Serialize};
 
 fn random_range(min: usize, max: usize) -> usize {
     let mut rng = thread_rng();
@@ -27,6 +28,12 @@ fn get_around_positions(
 // 爆弾の場合にNone, それ以外は Some(周囲の爆弾の数: u8)
 type PositionStatus = Option<u8>;
 
+struct Config {
+    width: usize,
+    hight: usize,
+    mine_count: usize,
+}
+
 pub struct MineSweeper {
     width: usize,
     hight: usize,
@@ -37,15 +44,15 @@ pub struct MineSweeper {
 }
 
 impl MineSweeper {
-    pub fn new(width: usize, hight: usize, mine_count: usize) -> MineSweeper {
+    pub fn new(config: Config) -> MineSweeper {
         // 爆弾の配置は最初にマスを開くタイミングで決める
         MineSweeper {
-            width,
-            hight,
-            mine_count,
+            width: config.width,
+            hight: config.hight,
+            mine_count: config.mine_count,
             opened_positions: HashSet::new(),
             flagged_positions: HashSet::new(),
-            position_status_array: vec![vec![Option::Some(0); width]; hight],
+            position_status_array: vec![vec![Option::Some(0); config.width]; config.hight],
         }
     }
 
@@ -233,23 +240,55 @@ impl Display for GameStatus {
     }
 }
 
+#[derive(Deserialize, Serialize)]
+pub enum GameMode {
+    Low,
+    Middle,
+    High,
+}
+
+impl GameMode {
+    fn get_config(&self) -> Config {
+        match self {
+            GameMode::Low => Config {
+                width: 10,
+                hight: 10,
+                mine_count: 9,
+            },
+            GameMode::Middle => Config {
+                width: 16,
+                hight: 16,
+                mine_count: 40,
+            },
+            GameMode::High => Config {
+                width: 30,
+                hight: 16,
+                mine_count: 99,
+            },
+        }
+    }
+}
+
 pub struct GameManager {
     status: Mutex<GameStatus>,
     mine_sweeper: Mutex<MineSweeper>,
 }
 
 impl GameManager {
-    pub fn new(width: usize, hight: usize, mine_count: usize) -> GameManager {
+    pub fn new(mode: GameMode) -> GameManager {
+        let config = mode.get_config();
         GameManager {
             status: Mutex::new(GameStatus::Init),
-            mine_sweeper: Mutex::new(MineSweeper::new(width, hight, mine_count)),
+            mine_sweeper: Mutex::new(MineSweeper::new(config)),
         }
     }
 
-    pub fn restart(&self) {
+    pub fn restart(&self, mode: GameMode) {
         self.status.lock().unwrap().init();
+
+        let config = mode.get_config();
         let mut ms = self.mine_sweeper.lock().unwrap();
-        *ms = MineSweeper::new(ms.width, ms.hight, ms.mine_count)
+        *ms = MineSweeper::new(config)
     }
 
     pub fn get_status(&self) -> GameStatus {

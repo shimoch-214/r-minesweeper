@@ -1,6 +1,6 @@
 import { invoke } from "@tauri-apps/api/tauri";
 import type { ResponseModel } from "./type";
-import { Position, type MineSweeperModel } from "../types";
+import { type GameMode, Position, type MineSweeperModel } from "../types";
 
 const convert = (res: ResponseModel): MineSweeperModel => {
   const openedPositions: MineSweeperModel["openedPositions"] = new Map(
@@ -50,7 +50,7 @@ export const subFlag = async (
   return convert(res);
 };
 
-export const restart = async (): Promise<MineSweeperModel> => {
-  const res: ResponseModel = await invoke("restart");
+export const restart = async (mode: GameMode): Promise<MineSweeperModel> => {
+  const res: ResponseModel = await invoke("restart", { mode });
   return convert(res);
 };

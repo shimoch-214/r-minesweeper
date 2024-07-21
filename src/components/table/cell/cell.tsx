@@ -1,8 +1,8 @@
-import { type MineSweeperModel, Position } from "../../types";
+import { type MineSweeperModel, Position } from "../../../types";
 import { Closed, Flagged, HiddenMine, InvalidFlagged } from "./closed";
 import { Opened } from "./opened";
-import { useMineSweeperCtx } from "../../provider";
-import { inProgress, isFlagged, isMine, isOpened } from "../lib";
+import { useMineSweeperCtx } from "../../../provider";
+import { inProgress, isFlagged, isMine, isOpened } from "../../lib";
 
 type Props = {
   x: number;
@@ -63,7 +63,6 @@ export function Cell({ x, y }: Props) {
   const pos = Position(x, y);
 
   const handleOpen = async () => {
-    if (!inProgress(mineSweeper)) return;
     if (!isOpened(mineSweeper, pos) && !isFlagged(mineSweeper, pos)) {
       await open(x, y);
     }
@@ -71,7 +70,6 @@ export function Cell({ x, y }: Props) {
 
   const handleFlag = async (event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault();
-    if (!inProgress(mineSweeper)) return;
     if (isOpened(mineSweeper, pos)) return;
 
     if (isFlagged(mineSweeper, pos)) {
@@ -81,8 +79,15 @@ export function Cell({ x, y }: Props) {
     }
   };
 
+  const isDisabled = !inProgress(mineSweeper);
+
   return (
-    <button onClick={handleOpen} onContextMenu={handleFlag} type="button">
+    <button
+      onClick={handleOpen}
+      onContextMenu={handleFlag}
+      disabled={isDisabled}
+      type="button"
+    >
       <div className="size-8 text-center leading-loose">
         {selectCell(mineSweeper, pos)}
       </div>

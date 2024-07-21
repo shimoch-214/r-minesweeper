@@ -1,7 +1,7 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use mine_sweeper::GameManager;
+use mine_sweeper::{GameManager, GameMode};
 use response::Response;
 use tauri::State;
 
@@ -32,14 +32,14 @@ fn sub_flag(gm: State<'_, GameManager>, x: usize, y: usize) -> Response {
 }
 
 #[tauri::command]
-fn restart(gm: State<'_, GameManager>) -> Response {
-    gm.restart();
+fn restart(gm: State<'_, GameManager>, mode: GameMode) -> Response {
+    gm.restart(mode);
     Response::from(&*gm)
 }
 
 fn main() {
     tauri::Builder::default()
-        .manage(GameManager::new(10, 10, 9))
+        .manage(GameManager::new(GameMode::Low))
         .invoke_handler(tauri::generate_handler![
             get, open, add_flag, sub_flag, restart
         ])

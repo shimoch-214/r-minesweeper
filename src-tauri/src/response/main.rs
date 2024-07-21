@@ -50,7 +50,6 @@ impl From<&GameManager> for Response {
             .collect();
 
         let mine_positions = if gm.get_status() == GameStatus::Failed {
-            println!("Failed");
             ms.get_mine_positions()
                 .iter()
                 .map(|p| Position { x: p.0, y: p.1 })
@@ -58,7 +57,6 @@ impl From<&GameManager> for Response {
         } else {
             vec![]
         };
-        println!("{:?}", mine_positions);
 
         Response {
             status: gm.get_status().to_string(),
