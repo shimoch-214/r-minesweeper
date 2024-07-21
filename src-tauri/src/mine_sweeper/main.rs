@@ -102,7 +102,6 @@ impl MineSweeper {
     }
 
     pub fn add_flag(&mut self, pos: &Position) {
-        // すでに空いてるマスにフラグを立てようとした場合とか爆弾数以上にフラグを立てようとした場合にエラーとするかはそのうち考える
         if !self.opened_positions.contains(pos) && self.flagged_positions.len() < self.mine_count {
             self.flagged_positions.insert(*pos);
         }
@@ -196,6 +195,9 @@ pub enum GameStatus {
 }
 
 impl GameStatus {
+    fn init(&mut self) {
+        *self = GameStatus::Init
+    }
     fn start(&mut self) {
         *self = GameStatus::Started
     }
@@ -229,6 +231,12 @@ impl GameManager {
             status: Mutex::new(GameStatus::Init),
             mine_sweeper: Mutex::new(MineSweeper::new(width, hight, mine_count)),
         }
+    }
+
+    pub fn restart(&self) {
+        self.status.lock().unwrap().init();
+        let mut ms = self.mine_sweeper.lock().unwrap();
+        *ms = MineSweeper::new(ms.width, ms.hight, ms.mine_count)
     }
 
     pub fn get_status(&self) -> GameStatus {

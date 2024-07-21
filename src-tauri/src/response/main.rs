@@ -71,6 +71,7 @@ mod tests {
     fn test() {
         let gm = GameManager::new(9, 9, 10);
         gm.open(&(1, 1));
+        gm.restart();
 
         let res = Response::from(&gm);
 

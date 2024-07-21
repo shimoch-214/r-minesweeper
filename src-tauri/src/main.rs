@@ -31,10 +31,18 @@ fn sub_flag(gm: State<'_, GameManager>, x: usize, y: usize) -> Response {
     Response::from(&*gm)
 }
 
+#[tauri::command]
+fn restart(gm: State<'_, GameManager>) -> Response {
+    gm.restart();
+    Response::from(&*gm)
+}
+
 fn main() {
     tauri::Builder::default()
         .manage(GameManager::new(10, 10, 9))
-        .invoke_handler(tauri::generate_handler![get, open, add_flag, sub_flag])
+        .invoke_handler(tauri::generate_handler![
+            get, open, add_flag, sub_flag, restart
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

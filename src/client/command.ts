@@ -44,3 +44,8 @@ export const subFlag = async (
   const res: ResponseModel = await invoke("sub_flag", { x, y });
   return convert(res);
 };
+
+export const restart = async (): Promise<MineSweeperModel> => {
+  const res: ResponseModel = await invoke("restart");
+  return convert(res);
+};

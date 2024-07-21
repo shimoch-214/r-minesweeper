@@ -16,6 +16,7 @@ const MineSweeperContext = createContext<
       open(x: number, y: number): Promise<void>;
       addFlag(x: number, y: number): Promise<void>;
       subFlag(x: number, y: number): Promise<void>;
+      restart(): Promise<void>;
     }
   | undefined
 >(undefined);
@@ -51,6 +52,12 @@ export function MineSweeperProvider({ children }: Props) {
     [isInitialized],
   );
 
+  const restart = useCallback(async () => {
+    if (!isInitialized) return;
+    const res = await command.restart();
+    setMineSweeper(res);
+  }, [isInitialized]);
+
   useEffect(() => {
     if (isInitialized) {
       return;
@@ -68,7 +75,7 @@ export function MineSweeperProvider({ children }: Props) {
 
   return (
     <MineSweeperContext.Provider
-      value={{ mineSweeper, open, addFlag, subFlag }}
+      value={{ mineSweeper, open, addFlag, subFlag, restart }}
     >
       {children}
     </MineSweeperContext.Provider>
