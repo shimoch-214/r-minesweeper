@@ -75,6 +75,19 @@ impl MineSweeper {
         self.flagged_positions.clone()
     }
 
+    pub fn get_mine_positions(&self) -> HashSet<Position> {
+        let mut mine_positions = HashSet::new();
+        for (j, row) in self.position_status_array.iter().enumerate() {
+            for (i, pos) in row.iter().enumerate() {
+                if pos.is_none() {
+                    mine_positions.insert((i, j));
+                }
+                continue;
+            }
+        }
+        mine_positions
+    }
+
     pub fn init_positions_status(&mut self, init_pos: &Position) {
         // 爆弾位置を決定する
         let mut mine_positions = HashSet::new();

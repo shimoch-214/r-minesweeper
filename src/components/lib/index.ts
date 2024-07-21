@@ -26,3 +26,10 @@ export const isFlagged = (
 ): boolean => {
   return mineSweeper.flaggedPositions.has(pos);
 };
+
+export const isMine = (
+  mineSweeper: MineSweeperModel,
+  pos: Position,
+): boolean => {
+  return mineSweeper.minePositions.has(pos);
+};

@@ -1,2 +1,2 @@
 mod main;
-pub use main::GameManager;
+pub use main::{GameManager, GameStatus};

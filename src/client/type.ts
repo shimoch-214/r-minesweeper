@@ -14,4 +14,8 @@ export type ResponseModel = {
     x: number;
     y: number;
   }[];
+  mine_positions: {
+    x: number;
+    y: number;
+  }[];
 };

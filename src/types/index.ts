@@ -17,4 +17,5 @@ export type MineSweeperModel = {
   mineCount: number;
   openedPositions: Map<Position, AroundMinesCount>;
   flaggedPositions: Set<Position>;
+  minePositions: Set<Position>;
 };

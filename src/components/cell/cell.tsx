@@ -1,15 +1,45 @@
 import { type MineSweeperModel, Position } from "../../types";
-import { Closed, Flagged } from "./closed";
+import { Closed, Flagged, HiddenMine, InvalidFlagged } from "./closed";
 import { Opened } from "./opened";
 import { useMineSweeperCtx } from "../../provider";
-import { inProgress, isFlagged, isOpened } from "../lib";
+import { inProgress, isFlagged, isMine, isOpened } from "../lib";
 
 type Props = {
   x: number;
   y: number;
 };
 
+const selectCellOnStarted = (mineSweeper: MineSweeperModel, pos: Position) => {
+  if (isFlagged(mineSweeper, pos)) {
+    return <Flagged />;
+  }
+  return <Closed />;
+};
+
+const selectCellOnSuccess = () => {
+  return <Flagged />;
+};
+
+const selectCellOnFailed = (mineSweeper: MineSweeperModel, pos: Position) => {
+  const flagged = isFlagged(mineSweeper, pos);
+  const mine = isMine(mineSweeper, pos);
+  if (flagged && !mine) {
+    return <InvalidFlagged />;
+  }
+  if (flagged) {
+    return <Flagged />;
+  }
+  if (mine) {
+    return <HiddenMine />;
+  }
+  return <Closed />;
+};
+
 const selectCell = (mineSweeper: MineSweeperModel, pos: Position) => {
+  if (mineSweeper.status === "Init") {
+    return <Closed />;
+  }
+
   if (isOpened(mineSweeper, pos)) {
     const aroundMineCount = mineSweeper.openedPositions.get(pos);
     if (aroundMineCount === undefined)
@@ -17,10 +47,14 @@ const selectCell = (mineSweeper: MineSweeperModel, pos: Position) => {
 
     return <Opened value={aroundMineCount} />;
   }
-  if (isFlagged(mineSweeper, pos)) {
-    return <Flagged />;
+  switch (mineSweeper.status) {
+    case "Started":
+      return selectCellOnStarted(mineSweeper, pos);
+    case "Success":
+      return selectCellOnSuccess();
+    case "Failed":
+      return selectCellOnFailed(mineSweeper, pos);
   }
-  return <Closed />;
 };
 
 export function Cell({ x, y }: Props) {

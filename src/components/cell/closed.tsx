@@ -7,9 +7,9 @@ export function Flagged(): JSX.Element {
 }
 
 export function InvalidFlagged(): JSX.Element {
-  return <div>invalidFlagged</div>;
+  return <div className="bg-slate-500 text-red-500 font-bold">F</div>;
 }
 
 export function HiddenMine(): JSX.Element {
-  return <div>hiddenMine</div>;
+  return <div className="bg-slate-500 text-yellow-500 font-bold">M</div>;
 }

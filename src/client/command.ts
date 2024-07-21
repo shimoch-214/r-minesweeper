@@ -9,6 +9,10 @@ const convert = (res: ResponseModel): MineSweeperModel => {
   const flaggedPositions: MineSweeperModel["flaggedPositions"] = new Set(
     res.flagged_positions.map((p) => Position(p.x, p.y)),
   );
+  const minePositions: MineSweeperModel["minePositions"] = new Set(
+    res.mine_positions.map((p) => Position(p.x, p.y)),
+  );
+
   return {
     status: res.status,
     width: res.width,
@@ -16,6 +20,7 @@ const convert = (res: ResponseModel): MineSweeperModel => {
     mineCount: res.mine_count,
     openedPositions,
     flaggedPositions,
+    minePositions,
   };
 };
 

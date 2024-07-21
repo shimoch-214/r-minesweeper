@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::mine_sweeper::GameManager;
+use crate::mine_sweeper::{GameManager, GameStatus};
 
 #[derive(Serialize, Deserialize)]
 struct OpenedPosition {
@@ -9,8 +9,8 @@ struct OpenedPosition {
     around_mines_count: u8,
 }
 
-#[derive(Serialize, Deserialize)]
-struct FlaggedPosition {
+#[derive(Serialize, Deserialize, Debug)]
+struct Position {
     x: usize,
     y: usize,
 }
@@ -22,7 +22,8 @@ pub struct Response {
     hight: usize,
     mine_count: usize,
     opened_positions: Vec<OpenedPosition>,
-    flagged_positions: Vec<FlaggedPosition>,
+    flagged_positions: Vec<Position>,
+    mine_positions: Vec<Position>,
 }
 
 impl From<&GameManager> for Response {
@@ -32,7 +33,7 @@ impl From<&GameManager> for Response {
         let flagged_positions = ms
             .get_flagged_positions()
             .iter()
-            .map(|p| FlaggedPosition { x: p.0, y: p.1 })
+            .map(|p| Position { x: p.0, y: p.1 })
             .collect();
 
         let opened_positions = ms
@@ -48,6 +49,17 @@ impl From<&GameManager> for Response {
             })
             .collect();
 
+        let mine_positions = if gm.get_status() == GameStatus::Failed {
+            println!("Failed");
+            ms.get_mine_positions()
+                .iter()
+                .map(|p| Position { x: p.0, y: p.1 })
+                .collect()
+        } else {
+            vec![]
+        };
+        println!("{:?}", mine_positions);
+
         Response {
             status: gm.get_status().to_string(),
             width: ms.get_width(),
@@ -55,6 +67,7 @@ impl From<&GameManager> for Response {
             mine_count: ms.get_mine_count(),
             opened_positions,
             flagged_positions,
+            mine_positions,
         }
     }
 }
