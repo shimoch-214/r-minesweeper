@@ -5,7 +5,10 @@ type Props = {
 };
 
 export function Opened({ value }: Props) {
-  return <div className="bg-slate-300 text-pink-400">{value}</div>;
+  if (value === 0) {
+    return <div className="bg-slate-300">&nbsp;</div>;
+  }
+  return <div className="bg-slate-300 text-pink-500 font-bold">{value}</div>;
 }
 
 export function Mine(): JSX.Element {

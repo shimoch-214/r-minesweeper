@@ -11,8 +11,12 @@ export function MineSweeper(): JSX.Element {
   );
 
   return (
-    <div>
-      <p>{ms.status}</p>
+    <div className="inline-block">
+      <div className="flex justify-between">
+        <p>{ms.mineCount - ms.flaggedPositions.size}</p>
+        <p>{ms.status}</p>
+        <p>time</p>
+      </div>
       <table className="flex justify-center">
         <tbody>
           {field.map((row) => (

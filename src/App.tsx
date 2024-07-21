@@ -3,9 +3,11 @@ import { MineSweeperProvider } from "./provider";
 
 function App() {
   return (
-    <MineSweeperProvider>
-      <MineSweeper />
-    </MineSweeperProvider>
+    <div className="flex justify-center">
+      <MineSweeperProvider>
+        <MineSweeper />
+      </MineSweeperProvider>
+    </div>
   );
 }
 

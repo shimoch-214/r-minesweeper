@@ -3,7 +3,7 @@ export function Closed(): JSX.Element {
 }
 
 export function Flagged(): JSX.Element {
-  return <div className="bg-slate-500 text-green-500">f</div>;
+  return <div className="bg-slate-500 text-green-400 font-bold">F</div>;
 }
 
 export function InvalidFlagged(): JSX.Element {
